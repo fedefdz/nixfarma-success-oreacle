@@ -40,7 +40,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             // _falta se carga en PreSincronizacion
-            var fechaDefault = new DateTime(2013, 1, 1); // new DateTime(DateTime.Now.Year - 2, 1, 1);
+            var fechaDefault = new DateTime(DateTime.Now.Year - 2, 1, 1);
             var pedidos = (_falta == null)
                 ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(fechaDefault)
                 : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(

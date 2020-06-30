@@ -27,7 +27,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _isEmpty = _sisfarma.Sinonimos.IsEmpty();
             }
 
-            if (true)
+            if (_isEmpty)
             {
                 var sinonimos = _farmacia.Sinonimos.GetAll();
 

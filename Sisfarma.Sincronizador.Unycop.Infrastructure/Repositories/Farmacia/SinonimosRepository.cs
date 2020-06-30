@@ -51,14 +51,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 }
 
                 reader.Close();
-                reader.Dispose();
-                MessageBox.Show("sinonimos cargados");
+                reader.Dispose();                
                 return sinonimos;
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            }            
             finally
             {
                 conn.Close();

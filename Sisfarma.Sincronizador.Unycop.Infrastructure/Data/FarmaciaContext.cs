@@ -71,7 +71,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
             // 'Driver' es un atributo de cadena de conexión no válido
             //string connectionString = $@"Driver={{Microsoft ODBC for Oracle}};Server={_localServer};Uid={_user.ToUpper()};Pwd={_password};";
 
-            string connectionString = $@"Data Source={_localServer};User ID={_user.ToUpper()};Password={_password};";
+            string connectionString = $@"Data Source={_localServer};User ID={_user.ToUpper()};Password={_password}; Enlist=false; Pooling=true;";
 
             //var conn = new OdbcConnection(connectionString);
             var conn = new OracleConnection(connectionString);

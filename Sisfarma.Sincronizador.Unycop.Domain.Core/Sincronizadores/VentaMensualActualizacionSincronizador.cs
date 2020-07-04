@@ -102,8 +102,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(FAR.Venta venta)
         {
-            if (!venta.HasDetalle())
-                return new PuntosPendientes[0];
+            if (!venta.HasDetalle()) return venta.TipoOperacion == "P"
+                 ? new PuntosPendientes[] { GenerarPuntoPendienteVentaSinDetalle(venta) }
+                 : new PuntosPendientes[0];
 
             var puntosPendientes = new List<PuntosPendientes>();
             foreach (var item in venta.Detalle.Where(d => d.HasFarmaco()))
@@ -179,6 +180,49 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             }
             
             _sisfarma.Clientes.Sincronizar(new List<FAR.Cliente>() { cliente });
+        }
+
+        private PuntosPendientes GenerarPuntoPendienteVentaSinDetalle(FAR.Venta venta)
+        {
+            return new PuntosPendientes
+            {
+                VentaId = $"{venta.Operacion}{_codigoEmpresa}".ToLongOrDefault(),
+                LineaNumero = 0,
+                CodigoBarra = string.Empty,
+                CodigoNacional = string.Empty,
+                Descripcion = "PAGO",
+
+                Familia = string.Empty,
+                SuperFamilia = string.Empty,
+                SuperFamiliaAux = string.Empty,
+                FamiliaAux = string.Empty,
+                CambioClasificacion = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? 1 : 0,
+
+                Cantidad = 0,
+                Precio = 0,
+                Pago = 0,
+                TipoPago = venta.TipoOperacion,
+                Fecha = venta.FechaHora.Date.ToDateInteger(),
+                DNI = venta.Cliente?.Id.ToString() ?? "0",
+                Cargado = _cargarPuntos.ToLower().Equals("si") ? "no" : "si",
+                Puesto = $"{venta.Puesto}",
+                Trabajador = !string.IsNullOrWhiteSpace(venta.VendedorCodigo) ? venta.VendedorCodigo.Trim() : string.Empty,
+                LaboratorioCodigo = string.Empty,
+                Laboratorio = string.Empty,
+                Proveedor = string.Empty,
+                Receta = string.Empty,
+                FechaVenta = venta.FechaHora,
+                PVP = 0,
+                PUC = 0,
+                Categoria = string.Empty,
+                Subcategoria = string.Empty,
+                VentaDescuento = venta.TotalDescuento,
+                LineaDescuento = 0,
+                TicketNumero = venta.Ticket?.Numero,
+                Serie = venta.Ticket?.Serie ?? string.Empty,
+                Sistema = SISTEMA_NIXFARMA,
+                Ubicacion = string.Empty
+            };
         }
     }
 
@@ -272,8 +316,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(FAR.Venta venta)
         {
-            if (!venta.HasDetalle())
-                return new PuntosPendientes[0];
+            if (!venta.HasDetalle()) return venta.TipoOperacion == "P"
+                 ? new PuntosPendientes[] { GenerarPuntoPendienteVentaSinDetalle(venta) }
+                 : new PuntosPendientes[0];
 
             var puntosPendientes = new List<PuntosPendientes>();
             foreach (var item in venta.Detalle.Where(d => d.HasFarmaco()))
@@ -349,6 +394,49 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             }
 
             _sisfarma.Clientes.Sincronizar(new List<FAR.Cliente>() { cliente });
+        }
+
+        private PuntosPendientes GenerarPuntoPendienteVentaSinDetalle(FAR.Venta venta)
+        {
+            return new PuntosPendientes
+            {
+                VentaId = $"{venta.Operacion}{_codigoEmpresa}".ToLongOrDefault(),
+                LineaNumero = 0,
+                CodigoBarra = string.Empty,
+                CodigoNacional = string.Empty,
+                Descripcion = "PAGO",
+
+                Familia = string.Empty,
+                SuperFamilia = string.Empty,
+                SuperFamiliaAux = string.Empty,
+                FamiliaAux = string.Empty,
+                CambioClasificacion = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? 1 : 0,
+
+                Cantidad = 0,
+                Precio = 0,
+                Pago = 0,
+                TipoPago = venta.TipoOperacion,
+                Fecha = venta.FechaHora.Date.ToDateInteger(),
+                DNI = venta.Cliente?.Id.ToString() ?? "0",
+                Cargado = _cargarPuntos.ToLower().Equals("si") ? "no" : "si",
+                Puesto = $"{venta.Puesto}",
+                Trabajador = !string.IsNullOrWhiteSpace(venta.VendedorCodigo) ? venta.VendedorCodigo.Trim() : string.Empty,
+                LaboratorioCodigo = string.Empty,
+                Laboratorio = string.Empty,
+                Proveedor = string.Empty,
+                Receta = string.Empty,
+                FechaVenta = venta.FechaHora,
+                PVP = 0,
+                PUC = 0,
+                Categoria = string.Empty,
+                Subcategoria = string.Empty,
+                VentaDescuento = venta.TotalDescuento,
+                LineaDescuento = 0,
+                TicketNumero = venta.Ticket?.Numero,
+                Serie = venta.Ticket?.Serie ?? string.Empty,
+                Sistema = SISTEMA_NIXFARMA,
+                Ubicacion = string.Empty
+            };
         }
     }
 }

@@ -42,6 +42,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
         public string EmpresaCodigo { get; set; }
 
         public ICollection<VentaDetalle> Detalle { get; set; }
+        
+        public string Situacion { get; set; }
 
         public Venta()
             => Detalle = new HashSet<VentaDetalle>();

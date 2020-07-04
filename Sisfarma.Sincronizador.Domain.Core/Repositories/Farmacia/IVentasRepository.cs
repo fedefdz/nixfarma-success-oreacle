@@ -12,6 +12,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         List<Venta> GetAllByIdGreaterOrEqual(long venta, DateTime fecha, string empresa);
 
+        List<Venta> GetAllGteYearAndLteNumber(int year, long number);
+
         List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta, string empresa);
 
         Venta GetOneOrDefaultById(long venta, string empresa, int anio);

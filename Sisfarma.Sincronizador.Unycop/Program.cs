@@ -115,6 +115,10 @@ namespace Sisfarma.Sincronizador.Unycop
                     farmacia: FarmaciaFactory.Create(),
                     fisiotes: SisfarmaFactory.Create()),
                     delay: SincronizadorTaskManager.DelayPuntosPendiente)
+            .AddSincronizador(new Domain.Core.Sincronizadores.VentasNoIncluidasActualizacionSincronizador(
+                    farmacia: FarmaciaFactory.Create(),
+                    fisiotes: SisfarmaFactory.Create()),
+                    delay: SincronizadorTaskManager.DelayPuntosPendiente)
             .AddSincronizador(new Domain.Core.Sincronizadores.VentaMensualActualizacionSincronizadorEmp1(
                     farmacia: FarmaciaFactory.Create(),
                     fisiotes: SisfarmaFactory.Create(),

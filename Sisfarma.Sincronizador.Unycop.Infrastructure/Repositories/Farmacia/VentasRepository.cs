@@ -512,5 +512,67 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Dispose();
             }
         }
+
+        public List<Venta> GetAllGteYearAndLteNumber(int year, long number)
+        {
+            var conn = FarmaciaContext.GetConnection();
+
+            try
+            {
+                var sql = $@"SELECT * FROM (SELECT
+                                EMP_CODIGO, OPERACION, SITUACION, CLI_CODIGO, TIPO_OPERACION, PUESTO, USR_CODIGO, FECHA_VENTA, IMPORTE_VTA_E, FECHA_FIN 
+                                FROM appul.ah_ventas
+                                WHERE NOT fecha_fin IS NULL
+                                    AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
+                                    AND operacion <= {number}
+                                    ORDER BY operacion DESC) WHERE ROWNUM <= 999";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                var ventas = new List<Venta>();
+                while (reader.Read())
+                {
+                    var empCodigo = Convert.ToString(reader["EMP_CODIGO"]);
+                    var operacion = Convert.ToInt64(reader["OPERACION"]);
+                    var situacion = Convert.ToString(reader["SITUACION"]);
+                    var cliCodigo = !Convert.IsDBNull(reader["CLI_CODIGO"]) ? (long)Convert.ToInt32(reader["CLI_CODIGO"]) : 0;
+                    var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
+                    var puesto = Convert.ToString(reader["PUESTO"]);
+                    var usrCodigo = Convert.ToString(reader["USR_CODIGO"]);
+                    var fechaVenta = Convert.ToDateTime(reader["FECHA_VENTA"]);
+                    var importeVentaE = !Convert.IsDBNull(reader["IMPORTE_VTA_E"]) ? Convert.ToDecimal(reader["IMPORTE_VTA_E"]) : default(decimal);
+                    var fechaFin = !Convert.IsDBNull(reader["FECHA_FIN"]) ? (DateTime?)Convert.ToDateTime(reader["FECHA_FIN"]) : null;
+                    ventas.Add(new Venta
+                    {
+                        ClienteId = cliCodigo,
+                        FechaFin = fechaFin,
+                        FechaHora = fechaVenta,
+                        TipoOperacion = tipoOperacion,
+                        Operacion = operacion,
+                        Puesto = puesto,
+                        VendedorCodigo = usrCodigo,
+                        TotalDescuento = importeVentaE,
+                        EmpresaCodigo = empCodigo,
+                        Situacion = situacion
+                    });
+                }
+
+                reader.Close();
+                reader.Dispose();
+                return ventas;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+        }
     }
 }

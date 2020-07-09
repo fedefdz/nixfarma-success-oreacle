@@ -28,6 +28,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected DateTime _timestampUltimaVenta;
         private string _filtrosResidencia;
         private string _verCategorias;
+        private string _sourceEmpresa;
 
         public PuntoPendienteSincronizadorEmp1(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -55,12 +56,13 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             if (_timestampUltimaVenta == DateTime.MinValue)
                 _timestampUltimaVenta = new DateTime(_anioInicio, 1, 1);
+            _sourceEmpresa = _farmacia. Empresas.GetCodigoByNumero(1);        
         }
 
         public override void Process()
         {
             var cargarPuntosSisfarma = _cargarPuntos == "si";
-            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP1");
+            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, _sourceEmpresa);
             if (!ventas.Any())
                 return;
 
@@ -78,7 +80,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 if (venta.FechaFin.HasValue)
                 {
                     //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, _sourceEmpresa);
 
                     if (venta.HasCliente() && _debeCopiarClientes)
                         InsertOrUpdateCliente(venta.Cliente);
@@ -87,7 +89,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 }
                 else
                 {
-                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });
+                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = _sourceEmpresa });
                 }
             }
 
@@ -240,6 +242,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected DateTime _timestampUltimaVenta;
         private string _filtrosResidencia;
         private string _verCategorias;
+        private string _sourceEmpresa;
 
         public PuntoPendienteSincronizadorEmp2(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -267,12 +270,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             if (_timestampUltimaVenta == DateTime.MinValue)
                 _timestampUltimaVenta = new DateTime(_anioInicio, 1, 1);
+
+            _sourceEmpresa = _farmacia.Empresas.GetCodigoByNumero(2);
         }
 
         public override void Process()
         {
             var cargarPuntosSisfarma = _cargarPuntos == "si";
-            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP2");
+            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, _sourceEmpresa);
             if (!ventas.Any())
                 return;
 
@@ -290,7 +295,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 if (venta.FechaFin.HasValue)
                 {
                     //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP2");
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, _sourceEmpresa);
 
                     if (venta.HasCliente() && _debeCopiarClientes)
                         InsertOrUpdateCliente(venta.Cliente);
@@ -299,7 +304,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 }
                 else
                 {
-                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP2" });
+                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = _sourceEmpresa });
                 }
             }
 

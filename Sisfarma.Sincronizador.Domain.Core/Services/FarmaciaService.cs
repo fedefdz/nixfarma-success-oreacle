@@ -28,6 +28,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
         IRecepcionRepository Recepciones { get; }
 
         IProveedorRepository Proveedores { get; }
+
+        IEmpresaRepository Empresas { get; }
     }
 
     public class FarmaciaService : IFarmaciaService
@@ -56,6 +58,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
 
         public IProveedorRepository Proveedores { get; set; }
 
+        public IEmpresaRepository Empresas { get; set; }
+
         public FarmaciaService()
         {
         }
@@ -71,7 +75,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             IListaRepository listas,
             ISinonimosRepository sinonimos,
             IRecepcionRepository recepciones,
-            IProveedorRepository proveedores)
+            IProveedorRepository proveedores,
+            IEmpresaRepository empresas)
         {
             Categorias = categorias ?? throw new ArgumentNullException(nameof(categorias));
             Familias = familias ?? throw new ArgumentNullException(nameof(familias));
@@ -84,6 +89,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             Sinonimos = sinonimos ?? throw new ArgumentNullException(nameof(sinonimos));
             Recepciones = recepciones ?? throw new ArgumentNullException(nameof(recepciones));
             Proveedores = proveedores ?? throw new ArgumentNullException(nameof(proveedores));
+            Empresas = empresas ?? throw new ArgumentNullException(nameof(empresas));
         }
     }
 }

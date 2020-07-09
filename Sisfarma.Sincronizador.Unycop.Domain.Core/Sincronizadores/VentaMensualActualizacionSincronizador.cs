@@ -24,6 +24,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private string _verCategorias;
         private string _filtrosResidencia;
         private string _codigoEmpresa = "00001";
+        private string _empresaUno;
 
         public VentaMensualActualizacionSincronizadorEmp1(IFarmaciaService farmacia, ISisfarmaService fisiotes, int listaDeArticulo)
             : base(farmacia, fisiotes, listaDeArticulo)
@@ -43,6 +44,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
             _puntosDeSisfarma = ConfiguracionPredefinida[Configuracion.FIELD_PUNTOS_SISFARMA];
             _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
         }
 
         public override void Process()
@@ -60,7 +62,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 .GetByCampo(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP1)
                     .ToIntegerOrDefault();
 
-            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, "EMP1");
+            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, _empresaUno);
             var batchPuntosPendientes = new List<PuntosPendientes>();
             foreach (var venta in ventas)
             {
@@ -71,7 +73,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
                 //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
+                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, _empresaUno);
 
                 if (venta.HasCliente() && _debeCopiarClientes)
                     InsertOrUpdateCliente(venta.Cliente);
@@ -239,6 +241,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private string _verCategorias;
         private string _filtrosResidencia;
         private string _codigoEmpresa = "00002";
+        private string _empresaDos;
 
         public VentaMensualActualizacionSincronizadorEmp2(IFarmaciaService farmacia, ISisfarmaService fisiotes, int listaDeArticulo)
             : base(farmacia, fisiotes, listaDeArticulo)
@@ -258,6 +261,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
             _puntosDeSisfarma = ConfiguracionPredefinida[Configuracion.FIELD_PUNTOS_SISFARMA];
             _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
+            _empresaDos = _farmacia.Empresas.GetCodigoByNumero(2);
         }
 
         public override void Process()
@@ -275,7 +279,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 .GetByCampo(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP2)
                     .ToIntegerOrDefault();
 
-            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, "EMP2");
+            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, _empresaDos);
             var batchPuntosPendientes = new List<PuntosPendientes>();
             foreach (var venta in ventas)
             {
@@ -286,7 +290,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
                 //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP2");
+                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, _empresaDos);
 
                 if (venta.HasCliente() && _debeCopiarClientes)
                     InsertOrUpdateCliente(venta.Cliente);

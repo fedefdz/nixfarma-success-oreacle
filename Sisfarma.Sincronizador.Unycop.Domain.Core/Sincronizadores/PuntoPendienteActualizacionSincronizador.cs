@@ -10,6 +10,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
     public class PuntoPendienteActualizacionSincronizador : DC.PuntoPendienteActualizacionSincronizador
     {
         private int _anioInicio;
+        private string _empresaUno;
+        private string _empresaDos;
 
         public PuntoPendienteActualizacionSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -25,6 +27,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void PreSincronizacion()
         {
             base.PreSincronizacion();
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
+            _empresaDos = _farmacia.Empresas.GetCodigoByNumero(2);
         }
 
         public override void Process()
@@ -36,7 +40,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 var ventaSerial = pto.VentaId.ToString();
                 var numeroVenta = long.Parse(ventaSerial.SubstringEnd(5));
-                var empresa = ventaSerial.Substring(ventaSerial.Length - 5) == "00001" ? "EMP1" : "EMP2";
+                var empresa = ventaSerial.Substring(ventaSerial.Length - 5) == "00001" ? _empresaUno : _empresaDos;
                 var venta = _farmacia.Ventas.GetOneOrDefaultById(numeroVenta, empresa, _anioInicio);
                 if (venta != null)
                 {

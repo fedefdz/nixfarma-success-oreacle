@@ -19,6 +19,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private string _puntosDeSisfarma;
         private bool _perteneceFarmazul;
         private string _clasificacion;
+        private string _empresaUno;
 
         const string FAMILIA_DEFAULT = "<Sin Clasificar>";
         const string LABORATORIO_DEFAULT = "<Sin Laboratorio>";
@@ -39,6 +40,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _perteneceFarmazul = bool.Parse(ConfiguracionPredefinida[Configuracion.FIELD_ES_FARMAZUL]);
             _puntosDeSisfarma = ConfiguracionPredefinida[Configuracion.FIELD_PUNTOS_SISFARMA];
             _clasificacion = _clasificacion = TIPO_CLASIFICACION_CATEGORIA;
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
         }
 
         public override void PreSincronizacion()
@@ -65,7 +67,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var lastVentaNoIncluida = 0L;
             foreach (var venta in ventasNormales)
             {
-                var empresaSerial = "EMP1".Equals(venta.EmpresaCodigo) ? "00001" : "00002";
+                var empresaSerial = _empresaUno.Equals(venta.EmpresaCodigo) ? "00001" : "00002";
 
                 if (venta.ClienteId > 0)
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
@@ -90,7 +92,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             foreach (var anulada in ventasAnuladas)
             {
-                var empresaSerial = "EMP1".Equals(anulada.EmpresaCodigo) ? "00001" : "00002";
+                var empresaSerial = _empresaUno.Equals(anulada.EmpresaCodigo) ? "00001" : "00002";
                 var ventaAnulada = $"{anulada.Operacion}{empresaSerial}".ToLongOrDefault();
                 _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = ventaAnulada });
             }

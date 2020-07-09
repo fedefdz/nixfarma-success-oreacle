@@ -74,23 +74,24 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var batchPuntosPendientes = new List<PuntosPendientes>();
                 var batchVentasPendientesDelete = new List<DeleteVentaPendiente>();
                 foreach (var venta in ventas)
-                {
+                {                    
+                    if (venta.ClienteId > 0)
+                        venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
+
+                    if (venta.HasCliente() && _debeCopiarClientes)
+                        InsertOrUpdateCliente(venta.Cliente);
+
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, empresa);
                     var empresaSerial = empresa == _empresaUno ? "00001" : "00002";
-                    var existe = _sisfarma.PuntosPendientes.Exists(long.Parse($"{numeroVenta}{empresaSerial}"));
-                    if (!existe)
+                    var puntosPendientes = GenerarPuntosPendientes(venta, empresaSerial);
+                    batchPuntosPendientes.AddRange(puntosPendientes);
+
+                    // TODO preguntar si la API actualiza configuraciones
+                    //_sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTAS_NO_INCLUIDAS, $"{numeroVenta}");
+                    if (venta.Operacion == numeroVenta && venta.EmpresaCodigo == empresa)
                     {
-                        _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTAS_NO_INCLUIDAS, $"{numeroVenta}");
-                        if (venta.ClienteId > 0)
-                            venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
-
-                        if (venta.HasCliente() && _debeCopiarClientes)
-                            InsertOrUpdateCliente(venta.Cliente);
-
-                        venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, empresa);
-                        var puntosPendientes = GenerarPuntosPendientes(venta, empresaSerial);
-                        batchPuntosPendientes.AddRange(puntosPendientes);
+                        batchVentasPendientesDelete.Add(new DeleteVentaPendiente { idventa = numeroVenta, empresa = empresa });
                     }
-                    else batchVentasPendientesDelete.Add(new DeleteVentaPendiente { idventa = numeroVenta, empresa = empresa });
                 }
 
                 if (batchPuntosPendientes.Any()) _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes);

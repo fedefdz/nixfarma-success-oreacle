@@ -60,6 +60,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                         else _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId, idnlinea = item.Linea });
                     }
                 }
+                // TODO aqui podría fallar la api
                 else _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId });
             }
         }

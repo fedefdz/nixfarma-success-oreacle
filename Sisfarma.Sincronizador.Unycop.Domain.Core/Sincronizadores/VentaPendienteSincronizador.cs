@@ -28,6 +28,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private string _copiarClientes;
         private bool _perteneceFarmazul;
         private string _filtrosResidencia;
+        private string _empresaUno;
 
         public VentaPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -48,6 +49,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
             _perteneceFarmazul = bool.Parse(ConfiguracionPredefinida[Configuracion.FIELD_ES_FARMAZUL]);
             _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
         }
 
         public override void PreSincronizacion()
@@ -73,7 +75,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var batchVentasPendientesDelete = new List<DeleteVentaPendiente>();
                 foreach (var venta in ventas)
                 {
-                    var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
+                    var empresaSerial = empresa == _empresaUno ? "00001" : "00002";
                     var existe = _sisfarma.PuntosPendientes.Exists(long.Parse($"{numeroVenta}{empresaSerial}"));
                     if (!existe)
                     {

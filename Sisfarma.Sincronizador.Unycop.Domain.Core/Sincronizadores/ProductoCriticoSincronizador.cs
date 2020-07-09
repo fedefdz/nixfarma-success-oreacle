@@ -18,6 +18,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private string _clasificacion;
         private string _verCategorias;
+        private string _empresaUno;
 
         public ProductoCriticoSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) :
             base(farmacia, fisiotes)
@@ -30,6 +31,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
                 : TIPO_CLASIFICACION_DEFAULT;
             _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
         }
 
         public override void PreSincronizacion()
@@ -50,7 +52,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var faltantes = new List<Falta>();
             foreach (var pedido in pedidos)
             {
-                var empresaSerial = pedido.Empresa == "EMP1" ? "00001" : "00002";
+                var empresaSerial = pedido.Empresa == _empresaUno ? "00001" : "00002";
                 pedido.Id = long.Parse($@"{pedido.Numero}{empresaSerial}");
                 Task.Delay(5).Wait();
 

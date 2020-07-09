@@ -19,6 +19,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private readonly ILaboratorioRepository _laboratorioRepository;
         private readonly IFamiliaRepository _familiaRepository;
 
+        private string _empresaUno;
+
         public PedidoSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
@@ -30,6 +32,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void PreSincronizacion()
         {
             base.PreSincronizacion();
+            _empresaUno = _farmacia.Empresas.GetCodigoByNumero(1);
         }
 
         public override void Process()
@@ -67,7 +70,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var numeroPedido = pedido.Key.Pedido;
                 var numeroPedidoSerial = numeroPedido.ToString().PadLeft(6, '0');
                 var empresa = pedido.Key.Empresa;
-                var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
+                var empresaSerial = empresa == _empresaUno ? "00001" : "00002";
                 var anio = pedido.Key.Anio;
                 var identity = long.Parse($"{anio}{numeroPedidoSerial}{empresaSerial}");
 

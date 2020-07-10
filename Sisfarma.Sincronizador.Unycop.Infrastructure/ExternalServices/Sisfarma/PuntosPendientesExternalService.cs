@@ -36,7 +36,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 
         public bool ExistsGreatThanOrEqual(DateTime fecha, string empresa)
         {
-            var year = fecha.Year;
+            var year = DateTime.Now.Year;
             var fechaVenta = fecha.Date.ToIsoString();
 
             try

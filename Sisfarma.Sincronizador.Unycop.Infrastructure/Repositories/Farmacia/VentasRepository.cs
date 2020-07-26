@@ -112,10 +112,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                     AND operacion = {value}
                                     AND situacion = 'N'
                                     AND NOT fecha_fin IS NULL
-                                    AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
-                                    AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
+                                    AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')                                    
                                     ORDER BY fecha_venta ASC) WHERE ROWNUM <= 999";
-
+                // TODO remove si pasan los test 26/07/2020
+                //AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
                 conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
